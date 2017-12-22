@@ -1,9 +1,24 @@
 class block(object):
     '''
-    blocktract base object
+    blocktract base object that all base blocks inherit from
     '''
-    def compile(self):
+    @property
+    def abi(self):
         '''
-        return LLL segment representing this object
+        return dict representing this object's ABI
         '''
-        raise NotImplemented("Inherited class must produce LLL segment")
+        raise NotImplemented("Inherited class must produce ABI")
+    
+    @property
+    def bytecode(self):
+        '''
+        return LLL segment representing this object's init code
+        '''
+        raise NotImplemented("Inherited class must produce LLL for init")
+
+    @property
+    def runtime(self):
+        '''
+        return LLL segment representing this object's runtime code
+        '''
+        raise NotImplemented("Inherited class must produce LLL for runtime")
