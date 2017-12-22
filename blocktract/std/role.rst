@@ -2,7 +2,7 @@
   assignee: address
 
 .. init::
-  assignee = msg.sender
+  assignee = :arg[0]:
 
 .. reassign::
   assert :msg.sender: is assignee
