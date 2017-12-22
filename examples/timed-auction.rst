@@ -20,10 +20,10 @@ starting bid and duration.
 NOTE: Generates `deed.address: address, timer.duration: timedelta, bid: Ether` for ABI
 
 .. init::
-  deed(:arg[0]:)
+  deed(:arg:)
   assert deed.owner is :msg.sender:
-  timer(:arg[1]:)
-  bid = :arg[2]:
+  timer(:arg:)
+  bid = :arg:
   timer.start()
 
 The bidding is allowed from when this contract is deployed,

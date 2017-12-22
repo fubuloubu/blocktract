@@ -14,7 +14,7 @@ Talk about the initial conditions and what they mean here
 If arguments are given, they are mandatory
 
 .. init:: python
-  duration = :arg[0]:
+  duration = :arg:
 
 Methods
 =======
