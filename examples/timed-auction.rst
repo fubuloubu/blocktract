@@ -8,6 +8,7 @@ Timed Auction Contract
 The owner of an external contract `deed` creates this contract
 to run a timed auction for the sale of their asset with a given
 starting bid and duration.
+
 .. state::
   deed: Contract (
     owner: Role
@@ -17,6 +18,7 @@ starting bid and duration.
   bid: Ether
 
 NOTE: Generates `deed.address: address, timer.duration: timedelta, bid: Ether` for ABI
+
 .. init::
   deed(:arg[0]:)
   assert deed.owner is :msg.sender:
@@ -29,6 +31,7 @@ and is disallowed when the timer has timed out.
 If a bid is made that is larger than a previous bid,
 the highest bidder is recorded, and the next highest bidder
 is refunded
+
 .. bid::
   assert not timer.timed-out()
   assert :msg.value: > bid
@@ -43,6 +46,7 @@ is refunded
 When the timer is timed out, the owner of the deed transfers
 ownership of the asset to the auction winner, and transfers
 the proceeds to their own account.
+
 .. claim::
   deed.owner.reassign(highest-bidder)
   selfdestruct(:msg.sender:)
