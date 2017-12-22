@@ -1,33 +1,33 @@
-# Globals
+Globals
+=======
 Talk about state here, discuss what each does etc.
 
-  :_state_:
+.. state:: python
   running: bool = False
-  duration: timedelta = :_null_:
-  start-time: timestamp = :_null_:
+  duration: timedelta = :null:
+  start-time: timestamp = :null:
 
----
-
-# Inital conditions
+Inital Conditions
+=================
 Talk about the initial conditions and what they mean here
 
-  :_init_:
-  duration = :_arg[0]_:
+If arguments are given, they are mandatory
 
----
+.. init:: python
+  duration = :arg[0]:
 
-# Methods
+Methods
+=======
 Talk about each method and what it does
 
 This method lets you start the timer
 
-  :start:
-  start-time = :_msg.timestamp_:
+.. start:: python
+  start-time = :msg.timestamp:
   running = True
 
 This method allows you to test if the timer has exceeded the duration since start
 
-  :timed-out:
+.. timed-out:: python
   assert running
-  return :_msg-timestamp_: >= start-time + duration
-
+  return :msg.timestamp: >= start-time + duration
