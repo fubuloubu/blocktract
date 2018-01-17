@@ -1,3 +1,4 @@
+from .types import Type
 from .eth.environment import environment_vars
 
 class Context:
@@ -14,8 +15,12 @@ class Context:
     def pop(self):
         self.scopes.pop()
 
+    # Get scope of variable
+    def is_state_var(name: str) -> bool:
+        return name in self.state.keys()
+
     # Get variable if available in namespace
-    def get(self, name, namespace=None) -> bool:
+    def get(self, name: str, namespace: str=None) -> Type:
         if not namespace:
             for scope in self.scopes:
                 if name in scope.keys():
@@ -30,3 +35,6 @@ class Context:
             return self.environment[namespace][name]
         raise ValueError("'{}' not a valid context!".format(namespace))
 
+    # Create variable in current namespace
+    def set(self, name: str, val: Type):
+        self.scopes[-1][name] = val

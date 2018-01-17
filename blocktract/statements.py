@@ -1,5 +1,5 @@
 import ast
-from .types import ArgType
+from .types import Type
 from .context import Context
 from .operators import parse_operator
 
@@ -26,18 +26,28 @@ class StmtType:
 class AssertStmt(StmtType):
     def _parse_statement(self):
         self.test = parse_statement(self._statement.test, self._context)
+    
+    def __repr__(self):
+        return "{'assert': " + str(self.test) + "}"
 
 class AssignStmt(StmtType):
     def _parse_statement(self):
         target = self._statement.targets[0]
+        # TODO: Handle missing from current scope by adding variable
         self.target = self._context.get(target.attr, namespace=target.value.id)
         self.value = parse_statement(self._statement.value, self._context)
+    
+    def __repr__(self):
+        return "{'assign': {" + str(self.target) + ": " + str(self.value) + "}}"
 
 class ReturnStmt(StmtType):
     def _parse_statement(self):
         target = self._statement.value
         var = self._context.get(target.attr, namespace=target.value.id)
         self.returns = var
+
+    def __repr__(self):
+        return "{'return': " + str(self.returns) + "}"
 
 class CompareStmt(StmtType):
     def _parse_statement(self):
@@ -46,6 +56,11 @@ class CompareStmt(StmtType):
         self.left = parse_statement(self._statement.left, self._context)
         assert len(self._statement.comparators) == 1, "Only supports one comparator!"
         self.right = parse_statement(self._statement.comparators[0], self._context)
+
+    def __repr__(self):
+        return "{'compare': {'left': "+ str(self.left) + \
+                ", 'op': " + str(self.operator) + \
+                ", 'right': "+ str(self.right) + "}}"
 
 statement_types={}
 statement_types[ast.Assert] = AssertStmt

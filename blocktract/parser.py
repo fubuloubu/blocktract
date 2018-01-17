@@ -2,7 +2,7 @@ import ast
 
 from .types import (
         GlobalType, global_types,
-        ArgType, arg_types,
+        local_types,
     )
 from .context import Context
 from .statements import (
@@ -10,19 +10,19 @@ from .statements import (
         ReturnStmt,
     )
 
-def parse_global(typeclass: str, value=None) -> GlobalType:
+def parse_global(name: str, typeclass: str, value=None) -> GlobalType:
     assert typeclass in global_types.keys(), \
             "'{}' is not a supported type!".format(typeclass)
-    return global_types[typeclass](value=value)
+    return global_types[typeclass](name, namespace='self', value=value)
 
 def parse_args(args: list) -> dict:
     parsed_args = {}
     for name, typeclass in args:
-        assert typeclass in arg_types.keys(), \
+        assert typeclass in local_types.keys(), \
                 "'{}' is not a supported type!".format(typeclass)
         assert name not in parsed_args.keys(), \
                 "Arg '{}' already in args!".format(name)
-        parsed_args[name] = arg_types[typeclass]()
+        parsed_args[name] = local_types[typeclass](name)
     return parsed_args
 
 class Function:
@@ -36,17 +36,19 @@ class Function:
         # Check return type
         for stmt in self.body:
             if isinstance(stmt, ReturnStmt):
-                assert return_type in arg_types.keys(), \
+                assert return_type in local_types.keys(), \
                         "'{}' is not a supported type!".format(return_type)
-                assert isinstance(stmt.returns, arg_types[return_type]), \
+                assert isinstance(stmt.returns, local_types[return_type]), \
                         "Statement returns '{}' instead of '{}':\n{}".\
-                                format(arg_types[return_type], stmt.returns, stmt)
+                                format(local_types[return_type], stmt.returns, stmt)
 
     def __repr__(self):
         # JSON formatted output
         repr_str = "{"
         repr_str += "'decorators': {}, ".format(self.decorators) if self.decorators else ""
-        repr_str += "'args': {}, ".format(self.args) if self.args else ""
+        repr_str += "'args': [{}], ".format(", ".\
+                    join(["{"+"'{}': '{}'".format(k, repr(v))+"}" for k, v in self.args.items()])) \
+                            if self.args else ""
         repr_str += "'body': {}, ".format(self.body) if self.body else ""
         repr_str += "'returns': {}, ".format(self.returns) if self.returns else ""
         repr_str = repr_str[:-2] + "}"  # Remove extra space and comma
@@ -64,7 +66,9 @@ class Contract:
                 assert not methods, "Cannot add global after method!"
                 assert node.target.id not in state, \
                         "'{}' already defined!".format(node.target.id)
-                state[node.target.id] = parse_global(node.annotation.id, value=node.value)
+                state[node.target.id] = parse_global(node.target.id,
+                                                     node.annotation.id,
+                                                     value=node.value)
             elif isinstance(node, ast.FunctionDef):
                 if not hasattr(self, 'context'):
                     # Define top-level context
@@ -90,7 +94,9 @@ class Contract:
     def __repr__(self):
         # JSON formatted output
         repr_str = "{"
-        repr_str += "'state': {}, ".format(self.state) if self.state else ""
+        repr_str += ("'state': {"+", ".join(
+                        ["'{}': '{}'".format(k, repr(v)) for k, v in self.state.items()]
+                    )+"}, ") if self.state else ""
         repr_str += "'constructor': {}, ".format(self.constructor) if self.constructor else ""
         repr_str += "'methods': {}, ".format(self.methods) if self.methods else ""
         repr_str = repr_str[:-2] + "}"  # Remove extra space and comma
