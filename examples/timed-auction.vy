@@ -1,52 +1,48 @@
-Timed Auction Contract
-=====================
+from std import Role
+from std import Timer
 
-.. import::
-  Role from :std:
-  Timer from :std:
+# Added token 'contract' mapped to 'class'
+# unique to contract definitions
+#contract Deed:
+#    # Added token 'has' mapped to 'def'
+#    # unique to contract definitions
+#    has owner: Role
 
-The owner of an external contract `deed` creates this contract
-to run a timed auction for the sale of their asset with a given
-starting bid and duration.
+# Must define contract type separately
+deed: Deed
 
-.. state::
-  deed: Contract (
-    owner: Role
-  )
-  highest-bidder: Role
-  timer: Timer
-  bid: Ether
+highest_bidder: Role
+timer: Timer
+bid: Ether
 
-NOTE: Generates `deed.address: address, timer.duration: timedelta, bid: Ether` for ABI
+def __init__(deed_address: address, timer_duration: timedelta, bid: Ether):
+    # init Contract type, calling 'deed.__assign__(address)'
+    set(self.deed, deed_address)
 
-.. init::
-  deed(:arg:)
-  assert deed.owner is :msg.sender:
-  timer(:arg:)
-  bid = :arg:
-  timer.start()
+    # NOTE: External call to 'deed.owner.__repr__()'
+    assert get(self.deed.owner) == msg.sender
+    
+    self.bid = bid
 
-The bidding is allowed from when this contract is deployed,
-and is disallowed when the timer has timed out.
-If a bid is made that is larger than a previous bid,
-the highest bidder is recorded, and the next highest bidder
-is refunded
+    # Init Timer type, calling 'timer.__init__(timedelta)'
+    self.timer = Timer(timer_duration)
+    # Start timer, calling 'timer.start()'
+    timer.start()
 
-.. bid::
-  assert not timer.timed-out()
-  assert :msg.value: > bid
-  # Give the next highest their bid back
-  # NOTE No highest bidder exists the first time
-  if highest-bidder is not :null: :
-    highest-bidder.transfer(bid)
-  # Set the bid value for the next time
-  bid = :msg.value:
-  highest-bidder = :msg.sender:
+def bid():
+    assert self.timer.active()
+    assert msg.value > self.bid
 
-When the timer is timed out, the owner of the deed transfers
-ownership of the asset to the auction winner, and transfers
-the proceeds to their own account.
+    # Give the next highest their bid back
+    # NOTE No highest bidder exists the first time
+    if self.highest_bidder != 0x0:
+        self.highest_bidder.transfer(bid)
 
-.. claim::
-  deed.owner.reassign(highest-bidder)
-  selfdestruct(:msg.sender:)
+    # Set the bid value for the next time
+    self.bid = msg.value
+    self.highest_bidder = msg.sender
+
+def claim():
+    # NOTE: External call to 'deed.owner.__assign__(address)'
+    set(self.deed.owner, self.highest_bidder)
+    selfdestruct(msg.sender)

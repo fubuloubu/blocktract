@@ -1,33 +1,23 @@
-Globals
-=======
-Talk about state here, discuss what each does etc.
+running: bool = False
+duration: timedelta = 0
+start_time: timestamp = 0
 
-.. state:: python
-  running: bool = False
-  duration: timedelta = :null:
-  start-time: timestamp = :null:
+# NOTE: '__init__', '__repr__', and '__assign__' are optional,
+#       compiler will throw if used when unimplemented.
 
-Inital Conditions
-=================
-Talk about the initial conditions and what they mean here
+@private
+def __assign__(set_duration: timedelta):
+    self.duration = set_duration
 
-If arguments are given, they are mandatory
+@public
+def start():
+    self.start_time = msg.timestamp
+    self.running = True
 
-.. init:: python
-  duration = :arg:
+@public
+def reset():
+    self.running = False
 
-Methods
-=======
-Talk about each method and what it does
-
-This method lets you start the timer
-
-.. start:: python
-  start-time = :msg.timestamp:
-  running = True
-
-This method allows you to test if the timer has exceeded the duration since start
-
-.. timed-out:: python
-  assert running
-  return :msg.timestamp: >= start-time + duration
+@public
+def active():
+    return self.running and msg.timestamp <= start_time + duration
