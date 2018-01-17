@@ -13,18 +13,30 @@ class Type:
 
     def __repr__(self):
         return "{}({})".format(self._type, self.value)
-    
+
     def _parse_type(self):
-        raise NotImplementedError("Type Not Implemented '{}'".format(self))
+        raise NotImplementedError("parse_type Not Implemented '{}'".format(self))
+
+    def compute_type(self, right):
+        if self.return_type is right.return_type:
+            return self.return_type
+        raise ValueError("Types of {} and {} don't match!".format(left, right))
     
     @property
     def _type(self):
         return type(self).__name__.lower()
 
+    @property
+    def return_type(self):
+        return self
+
 # All 32-byte types inherit from this one
 class BaseType(Type):
     pass
 
+
+def compute_type(left: Type, right: Type):
+    return left.compute_type(right)
 
 from .lang import types as lang_types
 from .eth.types import eth_types

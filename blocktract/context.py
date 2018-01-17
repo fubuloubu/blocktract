@@ -1,11 +1,10 @@
 from .types import Type
-from .eth.environment import environment_vars
+from .eth.environment import environment
 
 class Context:
     def __init__(self, state=None):
         self.state = state
         self.scopes = []
-        self.environment = environment_vars
     
     # Push current scope, either function or branch-level
     def push(self, scope):
@@ -29,10 +28,10 @@ class Context:
         if namespace is 'self':
             assert name in self.state.keys(), "'{}' not in global context!".format(name)
             return self.state[name]
-        if namespace in self.environment.keys():
-            assert name in self.environment[namespace].keys(), \
-                    "'{}' not in environment context!".format(name)
-            return self.environment[namespace][name]
+        if namespace in environment.keys():
+            assert name in environment[namespace].keys(), \
+                    "'{}' not in '{}' environment context!".format(name, namespace)
+            return environment[namespace][name]
         raise ValueError("'{}' not a valid context!".format(namespace))
 
     # Create variable in current namespace

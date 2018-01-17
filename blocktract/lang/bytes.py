@@ -7,8 +7,8 @@ class Bytes(BaseType):
     def _parse_type(self):
         if self.value:
             assert self._storable(self.value), \
-                    "Value '{}' exceeds capacity for type '{}': [{}, {})".\
-                    format(self.value, self, min_val, max_val)
+                    "Value '{}' exceeds capacity for type '{}'".\
+                    format(self.value, repr(self))
         else:
             self.value = 0
 

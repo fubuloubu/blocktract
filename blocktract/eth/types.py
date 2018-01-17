@@ -3,7 +3,6 @@ from ..lang.bytes import (
     )
 from ..lang.integers import (
         Num,
-        Num256
     )
 
 class Address(Bytes):
@@ -28,7 +27,7 @@ class Address(Bytes):
 class Timedelta(Num):
     pass
 
-class Timestamp(Num256):
+class Timestamp(Num):
     pass
 
 eth_types = {}

@@ -38,9 +38,9 @@ class Function:
             if isinstance(stmt, ReturnStmt):
                 assert return_type in local_types.keys(), \
                         "'{}' is not a supported type!".format(return_type)
-                assert isinstance(stmt.returns, local_types[return_type]), \
+                assert isinstance(stmt.return_type, local_types[return_type]), \
                         "Statement returns '{}' instead of '{}':\n{}".\
-                                format(local_types[return_type], stmt.returns, stmt)
+                                format(stmt.return_type, local_types[return_type], stmt)
 
     def __repr__(self):
         # JSON formatted output
@@ -104,6 +104,7 @@ class Contract:
 
 def parse_vy(raw_code: str) -> Contract:
     py_ast = ast.parse(raw_code)
+    print(ast.dump(py_ast))
     vy_ast = Contract(py_ast)
     print(vy_ast)
     return vy_ast

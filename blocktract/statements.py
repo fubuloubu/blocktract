@@ -1,5 +1,5 @@
 import ast
-from .types import Type
+from .types import Type, local_types, compute_type
 from .context import Context
 from .operators import parse_operator
 
@@ -22,6 +22,10 @@ class StmtType:
     def __repr__(self):
         return "{} @ ({}, {})".format(self._py_ast, self._lineno, self._col_offset)
 
+    @property
+    def return_type(self):
+        return None
+
 
 class AssertStmt(StmtType):
     def _parse_statement(self):
@@ -35,7 +39,10 @@ class AssignStmt(StmtType):
         target = self._statement.targets[0]
         # TODO: Handle missing from current scope by adding variable
         self.target = self._context.get(target.attr, namespace=target.value.id)
-        self.value = parse_statement(self._statement.value, self._context)
+        if isinstance(self._statement.value, ast.NameConstant):
+            self.value = local_types[self.target._type]("literal", value=self._statement.value.value)
+        else:
+            self.value = parse_statement(self._statement.value, self._context)
     
     def __repr__(self):
         return "{'assign': {" + str(self.target) + ": " + str(self.value) + "}}"
@@ -43,30 +50,55 @@ class AssignStmt(StmtType):
 class ReturnStmt(StmtType):
     def _parse_statement(self):
         target = self._statement.value
-        var = self._context.get(target.attr, namespace=target.value.id)
-        self.returns = var
+        self.returns = parse_statement(self._statement.value, self._context)
+
+    @property
+    def return_type(self):
+        return self.returns.return_type
 
     def __repr__(self):
         return "{'return': " + str(self.returns) + "}"
 
-class CompareStmt(StmtType):
+class BinOpStmt(StmtType):
     def _parse_statement(self):
-        self.operator = parse_operator(self._statement.ops[0])
-        assert len(self._statement.ops) == 1, "Only supports one operator!"
+        self.operator = parse_operator(self._statement.op)
         self.left = parse_statement(self._statement.left, self._context)
-        assert len(self._statement.comparators) == 1, "Only supports one comparator!"
-        self.right = parse_statement(self._statement.comparators[0], self._context)
+        self.right = parse_statement(self._statement.right, self._context)
 
     def __repr__(self):
         return "{'compare': {'left': "+ str(self.left) + \
                 ", 'op': " + str(self.operator) + \
                 ", 'right': "+ str(self.right) + "}}"
 
+    def compute_type(self, right: Type):
+        return compute_type(self.left, self.right)
+
+    @property
+    def return_type(self):
+        return compute_type(self.left, self.right)
+
+class CompareStmt(BinOpStmt):
+    def _parse_statement(self):
+        assert len(self._statement.ops) == 1, "Only supports one operator!"
+        self.operator = parse_operator(self._statement.ops[0])
+        self.left = parse_statement(self._statement.left, self._context)
+        assert len(self._statement.comparators) == 1, "Only supports one comparator!"
+        self.right = parse_statement(self._statement.comparators[0], self._context)
+
+class BoolOpStmt(BinOpStmt):
+    def _parse_statement(self):
+        self.operator = parse_operator(self._statement.op)
+        assert len(self._statement.values) == 2, "Only supports binary operations"
+        self.left = parse_statement(self._statement.values[0], self._context)
+        self.right = parse_statement(self._statement.values[1], self._context)
+
 statement_types={}
 statement_types[ast.Assert] = AssertStmt
 statement_types[ast.Assign] = AssignStmt
 statement_types[ast.Return] = ReturnStmt
 statement_types[ast.Compare] = CompareStmt
+statement_types[ast.BinOp] = BinOpStmt
+statement_types[ast.BoolOp] = BoolOpStmt
 
 def parse_statement(statement: ast.FunctionDef, context: Context) -> StmtType:
     statement_type = type(statement)

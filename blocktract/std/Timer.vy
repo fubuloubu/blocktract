@@ -1,6 +1,6 @@
-running: bool = False
-duration: timedelta = 0
-start_time: timestamp = 0
+running: bool
+duration: timedelta
+start_time: timestamp
 
 # NOTE: '__init__', '__repr__', and '__assign__' are optional,
 #       compiler will throw if used when unimplemented.
@@ -11,7 +11,7 @@ def __assign__(set_duration: timedelta):
 
 @public
 def start():
-    self.start_time = msg.timestamp
+    self.start_time = blk.timestamp
     self.running = True
 
 @public
@@ -19,5 +19,5 @@ def reset():
     self.running = False
 
 @public
-def active():
-    return self.running and msg.timestamp <= start_time + duration
+def active() -> bool:
+    return self.running and blk.timestamp <= self.start_time + self.duration
