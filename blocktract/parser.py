@@ -38,8 +38,9 @@ class Function:
             if isinstance(stmt, ReturnStmt):
                 assert return_type in arg_types.keys(), \
                         "'{}' is not a supported type!".format(return_type)
-                assert isinstance(stmt.return_type, arg_types[return_type]), \
-                        "Statement doesn't return type '{}':\n{}".format(return_type, stmt)
+                assert isinstance(stmt.returns, arg_types[return_type]), \
+                        "Statement returns '{}' instead of '{}':\n{}".\
+                                format(arg_types[return_type], stmt.returns, stmt)
 
     def __repr__(self):
         # JSON formatted output
