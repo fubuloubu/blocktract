@@ -62,5 +62,5 @@ class Context:
             raise ValueError("Cannot create variable in scope '{}'!".format(scope))
         if self.has(var.name, scope):
             raise ValueError("Variable '{}' already exists in scope '{}'!".format(var.name, scope))
-        debug(self, "Creating " + var.type + " '" + var.name + "' in scope '" + scope + "'")
+        debug(self, "Creating {} '{}' in scope '{}'".format(var.type, var.name, scope))
         self.get_scope(scope)[var.name] = var

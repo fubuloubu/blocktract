@@ -1,14 +1,24 @@
 from .types import (
         address,
         timestamp,
-        timedelta
     )
 
+
+# These classes implement Ethereum environment variables
+class vyBlkTimestamp(timestamp):
+    pass
+
+class vyTxSender(address):
+    pass
+
+class vyMsgSender(address):
+    pass
+
+# So this can get loaded by ../context.py:Context
 environment = {}
-environment['msg'] = {}
-environment['msg']['sender'] = address()
 environment['blk'] = {}
-environment['blk']['timestamp'] = timestamp()
-environment['blk']['timedelta'] = timedelta()
+environment['blk']['timestamp'] = vyBlkTimestamp()
 environment['tx'] = {}
-environment['tx']['sender'] = address()
+environment['tx']['sender'] = vyTxSender()
+environment['msg'] = {}
+environment['msg']['sender'] = vyMsgSender()

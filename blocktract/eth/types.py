@@ -1,7 +1,7 @@
-from ..types import Type
+from ..types import vyType
 
 
-class address(Type):
+class address(vyType):
 
     @property
     def balance(self):
@@ -11,10 +11,10 @@ class address(Type):
     def codesize(self):# -> Num:
         pass
 
-class timedelta(Type):
+class timedelta(vyType):
     pass
 
-class timestamp(Type):
+class timestamp(vyType):
     pass
 
 from ..utils import module_classes

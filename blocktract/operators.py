@@ -1,46 +1,43 @@
-from .ast import BinOp
+from .ast import vyBinOp, vyBoolOp
 
+
+# Convieience class to stop recursion
+# Needs to be first so it's not overriden
+class Leaf:
+    def __new__(self, *args):
+        return self
 
 # Comparision Operators
-class Eq(BinOp):
+class vyEq(Leaf, vyBinOp):
     pass
 
 
-class Neq(BinOp):
+class vyNeq(Leaf, vyBinOp):
     pass
 
 
-class GtE(BinOp):
+class vyGtE(Leaf, vyBinOp):
     pass
 
 
-class LtE(BinOp):
+class vyLtE(Leaf, vyBinOp):
     pass
 
 
-class Lt(BinOp):
+class vyLt(Leaf, vyBinOp):
     pass
 
 
-class Gt(BinOp):
+class vyGt(Leaf, vyBinOp):
     pass
 
 
-# Math Operators Meta-class
-class MathOp(BinOp):
+# Math operators
+class vyAdd(Leaf, vyBinOp):
     pass
 
 
-class Add(MathOp):
-    pass
-
-
-# Boolean Operators Meta-class
-class BoolOp(BinOp):
-    pass
-
-
-class And(BoolOp):
+class vyAnd(Leaf, vyBoolOp):
     pass
 
 
