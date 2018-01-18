@@ -78,14 +78,18 @@ class Method(AST):
         self._fields = ('name','args','body','decorators')
         self.name = node.name
         self.context.new_scope(scope=self.name)
+        self._arg_list = []  # Keep order of list
         for n in node.args.args:
-            self.context.new(Variable(n))
+            var = Variable(n)
+            self.context.new(var)
+            self._arg_list.append(var.name)
         self.body = [transform(n, parent=self) for n in node.body]
         self.decorators = tuple([n.id for n in node.decorator_list])
 
     @property
     def args(self) -> list:
-        return self.context.get_scope(self.name)
+        var_list = self.context.get_scope(self.name)
+        return [var_list[v] for v in self._arg_list]
 
 
 class If(AST):
@@ -166,11 +170,10 @@ class list(AST):
     # We have two different kinds of lists, so route appropiately
     #def __new__(self, node: ast.AST, parent: AST):
 
-# Python magic to get all classes in this module
-import sys
-import inspect
+
+from .utils import module_classes
 from .operators import classes as operators
-classes = dict(inspect.getmembers(sys.modules[__name__], inspect.isclass))
+classes = module_classes(__name__)
 classes.update(operators)
 
 

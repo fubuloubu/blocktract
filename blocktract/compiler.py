@@ -1,7 +1,7 @@
 import ast
 import json
 
-from .ast import transform
+from .ast import transform, AST as VyAST
 from .debug import debug, ast2objtree
 
 
@@ -13,10 +13,10 @@ def _compile(raw_code: str,
              optimize=0) -> dict:
     py_ast = ast.parse(raw_code)
     if debug_py_ast:
-        debug('Python AST', ast2objtree(py_ast), level=5)
+        debug('Python AST', ast2objtree(py_ast, ast.AST), level=5)
     vy_ast = transform(py_ast)
     if debug_vy_ast:
-        debug('Vyper AST', ast2objtree(vy_ast), level=5)
+        debug('Vyper AST', ast2objtree(vy_ast, VyAST), level=5)
     #abi = get_abi(vy_ast)
     #if debug_vy_abi:
     #    debug('Application Binary Interface', abi, level=5)

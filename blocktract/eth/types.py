@@ -1,14 +1,7 @@
-from ..lang.bytes import (
-        Bytes,
-    )
-from ..lang.integers import (
-        Num,
-    )
+from ..types import Type
 
-class address:#(Bytes):
 
-    def __repr__(self):
-        return "{}(0x{:20x})".format(self._type, self.value)
+class address(Type):
 
     @property
     def balance(self):
@@ -18,13 +11,11 @@ class address:#(Bytes):
     def codesize(self):# -> Num:
         pass
 
-class timedelta(Num):
+class timedelta(Type):
     pass
 
-class timestamp(Num):
+class timestamp(Type):
     pass
 
-eth_types = {}
-eth_types['address'] = address
-eth_types['timedelta'] = timedelta
-eth_types['timestamp'] = timestamp
+from ..utils import module_classes
+eth_types = module_classes(__name__)

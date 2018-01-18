@@ -17,18 +17,19 @@ def debug(label, text, level=0):
     print('', file=sys.stderr)
 
 
-def ast2objtree(node, node_type=ast.AST):
-    print(node)
+def ast2objtree(node, node_type):
     obj = {}
     for field in node._fields:
         inner_node = getattr(node, field)
         if inner_node is not None:
-            if isinstance(inner_node, list) and len(inner_node) > 0:
-                obj[field] = [ast2objtree(n) for n in inner_node]
+            if isinstance(inner_node, list):
+                obj[field] = [ast2objtree(n, node_type) for n in inner_node]
             elif isinstance(inner_node, node_type):
-                obj[field] = ast2objtree(inner_node)
+                obj[field] = ast2objtree(inner_node, node_type)
             else:
                 obj[field] = str(inner_node)
     # json obj of class = dict of fields
-    if obj is not {}:
+    if len(node._fields) > 0:
         return { node.__class__.__name__ : obj }
+    else:
+        return node.__class__.__name__
