@@ -13,20 +13,20 @@ def _compile(raw_code: str,
              optimize=0) -> dict:
     py_ast = ast.parse(raw_code)
     if debug_py_ast:
-        debug('Python AST', ast2objtree(py_ast))
+        debug('Python AST', ast2objtree(py_ast), level=5)
     vy_ast = transform(py_ast)
     if debug_vy_ast:
-        debug('Vyper AST', ast2objtree(vy_ast))
+        debug('Vyper AST', ast2objtree(vy_ast), level=5)
     #abi = get_abi(vy_ast)
     #if debug_vy_abi:
-    #    debug('Application Binary Interface', abi)
+    #    debug('Application Binary Interface', abi, level=5)
     #lll_code = ast_to_lll(ast)
     #if debug_lll:
-    #    debug('LLL IR', lll_code)
+    #    debug('LLL IR', lll_code, level=5)
     #if optimize > 0:
     #    lll_code = optimize_lll(lll_code)
     #if debug_lll:
-    #    debug('Optimized LLL IR', lll_code)
+    #    debug('Optimized LLL IR', lll_code, level=5)
     #bytecode, runtime = compile_lll(lll_code)
     #return {'abi': abi, 'bin': bytecode, 'run': runtime}
     return dict()

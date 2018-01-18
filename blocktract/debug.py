@@ -2,17 +2,23 @@ import sys
 import json
 import ast
 
+# 0: functional debug, 5: compiler_stages
+LEVEL=1
 
-def debug(label, text):
+def debug(label, text, level=0):
+    if level < LEVEL:
+        return
     if not isinstance(label, str):
-        label = label.__class__.__name__
+        label = 'class ' + label.__class__.__name__
     if not isinstance(text, str):
         text = json.dumps(text, indent=2)
     print(label +':', file=sys.stderr)
-    print(text, file=sys.stderr)
+    print('  '+text.replace('\n','\n  '), file=sys.stderr)
+    print('', file=sys.stderr)
 
 
 def ast2objtree(node, node_type=ast.AST):
+    print(node)
     obj = {}
     for field in node._fields:
         inner_node = getattr(node, field)

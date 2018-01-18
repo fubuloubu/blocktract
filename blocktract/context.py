@@ -14,8 +14,13 @@ class Context:
     def new_scope(self, scope: str):
         if self.has_scope(scope):
             raise ValueError("Scope '{}' already exists in context!".format(scope))
+        debug(self, "Creating scope '" + scope + "'")
         self._scopes[scope] = {}
         self.current_scope = scope
+    
+    def del_scope(self, scope: str):
+        debug(self, "Deleting scope '" + scope + "'")
+        del self._scopes[scope]
 
     def has_scope(self, scope: str) -> bool:
         return scope in self.scopes
@@ -57,5 +62,5 @@ class Context:
             raise ValueError("Cannot create variable in scope '{}'!".format(scope))
         if self.has(var.name, scope):
             raise ValueError("Variable '{}' already exists in scope '{}'!".format(var.name, scope))
+        debug(self, "Creating " + var.type + " '" + var.name + "' in scope '" + scope + "'")
         self.get_scope(scope)[var.name] = var
-        debug(self, "Created " + var.name + " of type " + var.type)
