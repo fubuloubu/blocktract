@@ -51,8 +51,8 @@ class Module(AST):
                 raise NotImplementedError("Feature '{}' not implemented for 'Module'!".format(n))
 
     @property
-    def state(self):
-        return self.context.get_scope(self.name)
+    def state(self) -> list:
+        return [v for v in self.context.get_scope(self.name).values()]
 
 
 class Variable(AST):
@@ -150,6 +150,16 @@ class Assert(AST):
         self._parent = parent
         self._fields = ('stmt',)
         self.stmt = transform(node.test, parent=parent)
+
+
+class Operator(AST):
+    def __init__(self, node: ast.AST, parent: AST):
+        self._parent = parent
+        self._fields = ()
+
+
+class BinOp(Operator):
+    pass
 
 
 class Compare(AST):

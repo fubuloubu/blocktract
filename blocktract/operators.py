@@ -1,52 +1,46 @@
-import ast
-import operator
-
-from .ast import AST
+from .ast import BinOp
 
 
-class Operator(AST):
-    def __init__(self, node: ast.AST, parent: AST):
-        self._parent = parent
-        self._fields = ()
-
-
-class Eq(Operator):
+# Comparision Operators
+class Eq(BinOp):
     pass
 
 
-class Neq(Operator):
+class Neq(BinOp):
     pass
 
 
-class GtE(Operator):
+class GtE(BinOp):
     pass
 
 
-class LtE(Operator):
+class LtE(BinOp):
     pass
 
 
-class Lt(Operator):
+class Lt(BinOp):
     pass
 
 
-class Gt(Operator):
+class Gt(BinOp):
     pass
 
 
-class BinOp(AST):
+# Math Operators Meta-class
+class MathOp(BinOp):
     pass
 
-class BoolOp(AST):
+
+class Add(MathOp):
     pass
 
-class LtE(Operator):
+
+# Boolean Operators Meta-class
+class BoolOp(BinOp):
     pass
 
-class And(AST):
-    pass
 
-class Add(AST):
+class And(BoolOp):
     pass
 
 
