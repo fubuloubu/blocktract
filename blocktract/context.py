@@ -1,39 +1,61 @@
-from .types import Type
-from .eth.environment import environment
+from .debug import debug
+from .eth.environment import environment as eth_env
 
 class Context:
-    def __init__(self, state=None):
-        self.state = state
-        self.scopes = []
+    def __init__(self):
+        self._scopes = {}
+        self._scopes.update(eth_env)
+        self.RESTRICTED_SCOPES = eth_env.keys()
+
+    @property
+    def scopes(self) -> list:
+        return self._scopes.keys()
+
+    def new_scope(self, scope: str):
+        if self.has_scope(scope):
+            raise ValueError("Scope '{}' already exists in context!".format(scope))
+        self._scopes[scope] = {}
+        self.current_scope = scope
+
+    def has_scope(self, scope: str) -> bool:
+        return scope in self.scopes
+
+    def get_scope(self, scope=None) -> list:
+        if not scope:
+            return self._scopes[self.current_scope]
+        if self.has_scope(scope):
+            return self._scopes[scope]
+        raise ValueError("Scope '{}' does not exist in context!".format(scope))
+
+    @property
+    def all_vars(self):
+        for scope in self.scopes:
+            for var in self.vars(scope):
+                yield scope + '.' + var
+
+    def vars(self, scope=None) -> list:
+        if not scope:
+            scope = self.current_scope
+        return self.get_scope(scope).keys()
+
+    def has(self, varname: str, scope=None) -> bool:
+        if not scope:
+            scope = self.current_scope
+        return varname in self.vars(scope)
+
+    def get(self, varname: str, scope=None):
+        if not scope:
+            scope = self.current_scope
+        if self.has(varname, scope):
+            return self.get_scope(scope)[varname]
+        raise ValueError("Variable '{}' does not exist in scope '{}'!".format(varname, scope))
     
-    # Push current scope, either function or branch-level
-    def push(self, scope):
-        self.scopes.append(scope)
-
-    # Pop off current scope
-    def pop(self):
-        self.scopes.pop()
-
-    # Get scope of variable
-    def is_state_var(name: str) -> bool:
-        return name in self.state.keys()
-
-    # Get variable if available in namespace
-    def get(self, name: str, namespace: str=None) -> Type:
-        if not namespace:
-            for scope in self.scopes:
-                if name in scope.keys():
-                    return scope[name]
-            raise ValueError("'{}' not in local context!".format(name))
-        if namespace is 'self':
-            assert name in self.state.keys(), "'{}' not in global context!".format(name)
-            return self.state[name]
-        if namespace in environment.keys():
-            assert name in environment[namespace].keys(), \
-                    "'{}' not in '{}' environment context!".format(name, namespace)
-            return environment[namespace][name]
-        raise ValueError("'{}' not a valid context!".format(namespace))
-
-    # Create variable in current namespace
-    def set(self, name: str, val: Type):
-        self.scopes[-1][name] = val
+    def new(self, var, scope=None):
+        if not scope:
+            scope = self.current_scope
+        if scope in self.RESTRICTED_SCOPES:
+            raise ValueError("Cannot create variable in scope '{}'!".format(scope))
+        if self.has(var.name, scope):
+            raise ValueError("Variable '{}' already exists in scope '{}'!".format(var.name, scope))
+        self.get_scope(scope)[var.name] = var
+        debug(self, "Created " + var.name + " of type " + var.type)

@@ -5,16 +5,10 @@ from ..lang.integers import (
         Num,
     )
 
-class Address(Bytes):
-
-    def _storable(self, value):
-        # Literals can only be integers of length 20 bytes or less
-        if isinstance(value, int) and super.storable(value):
-            return value.bit_length() <= 2**20
-        return False
+class address:#(Bytes):
 
     def __repr__(self):
-        return "{}(0x{:02x})".format(self._type, self.value)
+        return "{}(0x{:20x})".format(self._type, self.value)
 
     @property
     def balance(self):
@@ -24,13 +18,13 @@ class Address(Bytes):
     def codesize(self):# -> Num:
         pass
 
-class Timedelta(Num):
+class timedelta(Num):
     pass
 
-class Timestamp(Num):
+class timestamp(Num):
     pass
 
 eth_types = {}
-eth_types['address'] = Address
-eth_types['timedelta'] = Timedelta
-eth_types['timestamp'] = Timestamp
+eth_types['address'] = address
+eth_types['timedelta'] = timedelta
+eth_types['timestamp'] = timestamp

@@ -1,33 +1,28 @@
 import ast
 import operator
 
-class OperatorType:
+from .ast import AST
+
+class BinOp(AST):
     pass
 
-class LessthanEqualsOperator(OperatorType):
-    def __str__(self):
-        return "'<='"
+class BoolOp(AST):
+    pass
 
-class EqualsOperator(OperatorType):
-    def __str__(self):
-        return "'=='"
+class LtE(AST):
+    pass
 
-class AndOperator(OperatorType):
-    def __str__(self):
-        return "'&&'"
+class Compare(AST):
+    pass
 
-class AddOperator(OperatorType):
-    def __str__(self):
-        return "'+'"
+class And(AST):
+    pass
 
-operator_types = {}
-operator_types[ast.LtE] = LessthanEqualsOperator
-operator_types[ast.Eq] = EqualsOperator
-operator_types[ast.And] = AndOperator
-operator_types[ast.Add] = AddOperator
+class Add(AST):
+    pass
 
-def parse_operator(operator) -> OperatorType:
-    operator_type = type(operator)
-    assert operator_type in operator_types.keys(), \
-        "Operator type '{}' not supported!".format(operator_type)
-    return operator_types[operator_type]()
+
+# Python magic to get all classes in this module
+import sys
+import inspect
+classes = dict(inspect.getmembers(sys.modules[__name__], inspect.isclass))

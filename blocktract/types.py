@@ -1,12 +1,8 @@
 # Base class of all types
 class Type:
-    def __init__(self, name: str, namespace: str=None, value=None):
-        # For pretty-printing
-        self.name = name
-        self.namespace = namespace
-
-        self.value = value
-        self._parse_type()
+    def __init__(self):
+        pass
+        #self._parse_type()
 
     def __str__(self):
         return "'" + (self.namespace + "." + self.name if self.namespace else self.name) + "'"
@@ -55,5 +51,4 @@ class LocalType(Type):
 
 local_types={}
 local_types.update(lang_types)
-del local_types['mapping'] # Mappings can't be a local
 local_types.update(eth_types)

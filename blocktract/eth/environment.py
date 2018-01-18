@@ -1,14 +1,14 @@
 from .types import (
-        Address,
-        Timestamp,
-        Timedelta
+        address,
+        timestamp,
+        timedelta
     )
 
 environment = {}
 environment['msg'] = {}
-environment['msg']['sender'] = Address
+environment['msg']['sender'] = address()
 environment['blk'] = {}
-environment['blk']['timestamp'] = Timestamp
-environment['blk']['timedelta'] = Timedelta
+environment['blk']['timestamp'] = timestamp()
+environment['blk']['timedelta'] = timedelta()
 environment['tx'] = {}
-environment['tx']['sender'] = Address
+environment['tx']['sender'] = address()
