@@ -12,10 +12,21 @@ class Type:
         #TODO change to NotImplementedError
         return True
 
-class bool(Type):
+    @property
+    def size(self):
+        raise NotImplementedError("'{}' doesn't implemented size!".format(self))
+
+class BaseType(Type):
+    _size = 32
+
+    @property
+    def size(self):
+        return self._size
+
+class bool(BaseType):
     compiled_type = 'bool'
 
-class uint256(Type):
+class uint256(BaseType):
     compiled_type = 'uint256'
 
 from .utils import module_classes
