@@ -20,7 +20,7 @@ class vyAST:
 
 
 class vyModule(vyAST):
-    _fields = ('name','state','methods')
+    _fields = ('name','state','constructor','methods')
     # Starts Context
     def __init__(self, node: ast.AST, parent: vyAST=None):
         debug(self, "body: " + str(node.body))
@@ -38,6 +38,7 @@ class vyModule(vyAST):
             else:
                 break
         # Then parse methods
+        self.constructor = None
         self.methods = []
         while len(node.body) > 0:
             n = body.pop(0)
@@ -45,8 +46,11 @@ class vyModule(vyAST):
             if isinstance(n, ast.AnnAssign):
                 raise ValueError("State definitions must come before any methods!")
             elif isinstance(n, ast.FunctionDef):
-                method_added = True
-                self.methods.append(vyMethod(n, self))
+                method = vyMethod(n, self)
+                if method.name is '__init__':
+                    self.contructor = method
+                else:
+                    self.methods.append(method)
             else:
                 raise NotImplementedError("Feature '{}' not implemented for 'Module'!".format(n))
 
@@ -71,8 +75,9 @@ class vyVariable(vyAST):
 
 class vyLiteral(vyAST):
     _fields = ('type','value')
-    def __init__(self, typename: str, _value=None):
+    def __init__(self, node: ast.AST, _value=None):
         # Determine type and initialize value
+        typename = get_type(_value) if _value else node.value.__class__.__name__
         self.type = get_type(typename)
         self.set_value(_value)
 
@@ -88,7 +93,7 @@ class vyLiteral(vyAST):
 
 
 class vyMethod(vyAST):
-    _fields = ('name','args','body','decorators')
+    _fields = ('name','args','body','decorators','returns')
     # Changes Context
     def __init__(self, node: ast.AST, parent: vyAST):
         self._parent = parent
@@ -101,6 +106,10 @@ class vyMethod(vyAST):
             self._arg_list.append(var.name)
         self.body = [transform(n, parent=self) for n in node.body]
         self.decorators = tuple([n.id for n in node.decorator_list])
+        # Last parse return type
+        self.returns = []
+        if isinstance(node.returns, ast.Name):
+            self.returns = [get_type(node.returns.id)]
 
     @property
     def args(self) -> list:

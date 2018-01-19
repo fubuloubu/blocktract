@@ -3,6 +3,7 @@ import json
 
 from .ast import transform, vyAST
 from .debug import debug, ast2objtree
+from .abi import get_abi
 
 
 def _compile(raw_code: str, 
@@ -17,9 +18,9 @@ def _compile(raw_code: str,
     vy_ast = transform(py_ast)
     if debug_vy_ast:
         debug('Vyper AST', ast2objtree(vy_ast, vyAST), level=5)
-    #abi = get_abi(vy_ast)
-    #if debug_vy_abi:
-    #    debug('Application Binary Interface', abi, level=5)
+    abi = get_abi(vy_ast)
+    if debug_vy_abi:
+        debug('Application Binary Interface', abi, level=5)
     #lll_code = ast_to_lll(ast)
     #if debug_lll:
     #    debug('LLL IR', lll_code, level=5)
@@ -28,8 +29,11 @@ def _compile(raw_code: str,
     #if debug_lll:
     #    debug('Optimized LLL IR', lll_code, level=5)
     #bytecode, runtime = compile_lll(lll_code)
-    #return {'abi': abi, 'bin': bytecode, 'run': runtime}
-    return dict()
+    return {
+            'abi': abi, 
+            #'bin': bytecode, 
+            #'run': runtime,
+        }
 
 if __name__ == '__main__':
     import argparse

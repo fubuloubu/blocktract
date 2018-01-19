@@ -42,6 +42,5 @@ class vyAnd(Leaf, vyBoolOp):
 
 
 # Python magic to get all classes in this module
-import sys
-import inspect
-classes = dict(inspect.getmembers(sys.modules[__name__], inspect.isclass))
+from .utils import module_classes
+classes = module_classes(__name__)
