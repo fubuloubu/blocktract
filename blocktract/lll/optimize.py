@@ -1,4 +1,2 @@
-from .types import LLLNode
-
-def optimize_lll(lll: LLLNode) -> LLLNode:
+def optimize_lll(lll: list) -> list:
     return lll
