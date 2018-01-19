@@ -1,7 +1,7 @@
 import ast
 
 from .debug import debug
-from .types import vyType, get_type
+from .types import get_type
 from .context import Context
 
 

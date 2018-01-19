@@ -1,7 +1,7 @@
-from ..types import vyType
+from ..types import uint256
 
 
-class vyaddress(vyType):
+class address(uint256):
     compiled_type = 'address'
 
     @property
@@ -12,10 +12,10 @@ class vyaddress(vyType):
     def codesize(self):# -> Num:
         pass
 
-class vytimedelta(vyType):
+class timedelta(uint256):
     pass
 
-class vytimestamp(vyType):
+class timestamp(uint256):
     pass
 
 from ..utils import module_classes
