@@ -4,6 +4,9 @@ import json
 from .ast import transform, vyAST
 from .debug import debug, ast2objtree
 from .abi import get_abi
+from .lll.utils import ast_to_lll
+from .lll.optimize import optimize_lll
+from .lll.compile import compile_lll
 
 
 def _compile(raw_code: str, 
@@ -21,18 +24,18 @@ def _compile(raw_code: str,
     abi = get_abi(vy_ast)
     if debug_vy_abi:
         debug('Application Binary Interface', abi, level=5)
-    #lll_code = ast_to_lll(ast)
-    #if debug_lll:
-    #    debug('LLL IR', lll_code, level=5)
-    #if optimize > 0:
-    #    lll_code = optimize_lll(lll_code)
-    #if debug_lll:
-    #    debug('Optimized LLL IR', lll_code, level=5)
-    #bytecode, runtime = compile_lll(lll_code)
+    lll_code = ast_to_lll(vy_ast)
+    if debug_lll_ir:
+        debug('LLL IR', lll_code, level=5)
+    if optimize > 0:
+        lll_code = optimize_lll(lll_code)
+    if debug_lll_ir:
+        debug('Optimized LLL IR', lll_code, level=5)
+    bytecode, runtime = compile_lll(lll_code)
     return {
             'abi': abi, 
-            #'bin': "0x"+bytecode.hex(), 
-            #'run': "0x"+runtime.hex(),
+            'bin': "0x"+bytecode.hex(),
+            'run': "0x"+runtime.hex(),
         }
 
 if __name__ == '__main__':
@@ -47,7 +50,7 @@ if __name__ == '__main__':
         vy-abi (Show Vyper ABI),
         lll-ir (Show LLL IR)
     ''')
-    flags.add_argument('--optimize', type=int, choices=[0, 1], help='Optimization Level')
+    flags.add_argument('--optimize', type=int, choices=[0, 1], default=0, help='Optimization Level')
     args = ap.parse_args()
     debug_flags = {'debug_'+k.replace('-','_'): True for k in args.debug.split(',')} \
                     if args.debug is not '' else {}
