@@ -20,7 +20,7 @@ class vyAST:
 
 
 class vyModule(vyAST):
-    _fields = ('name','state','constructor','methods')
+    _fields = ('name','state','constructor','methods','events')
     # Starts Context
     def __init__(self, node: ast.AST, parent: vyAST=None):
         debug(self, "body: " + str(node.body))
@@ -28,8 +28,9 @@ class vyModule(vyAST):
         self._context = parent.context if parent else Context()
         self.name = 'self' #else Module in Module?
         self.context.new_scope(self.name)
-        # Parse State schema first
+        # Parse Methods and State schema first
         body = node.body
+        self.events = []
         while len(body) > 0:
             n = body.pop(0)
             debug(self, "state: " + str(n))
@@ -115,6 +116,10 @@ class vyMethod(vyAST):
     def args(self) -> list:
         var_list = self.context.get_scope(self.name)
         return [var_list[v] for v in self._arg_list]
+
+
+class vyEvent(vyAST):
+    pass
 
 
 class vyIf(vyAST):

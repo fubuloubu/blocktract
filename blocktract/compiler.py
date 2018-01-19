@@ -31,8 +31,8 @@ def _compile(raw_code: str,
     #bytecode, runtime = compile_lll(lll_code)
     return {
             'abi': abi, 
-            #'bin': bytecode, 
-            #'run': runtime,
+            #'bin': "0x"+bytecode.hex(), 
+            #'run': "0x"+runtime.hex(),
         }
 
 if __name__ == '__main__':

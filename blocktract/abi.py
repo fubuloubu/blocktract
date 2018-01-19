@@ -1,6 +1,7 @@
 from .ast import (
         vyModule,
         vyMethod,
+        vyEvent,
     )
 
 def function_abi(method: vyMethod) -> dict:
@@ -10,11 +11,14 @@ def function_abi(method: vyMethod) -> dict:
     for a in method.args:
         function['inputs'].append({
                 'name': a.name,
-                'type': str(a.type)
+                'type': a.type.compiled_type
             })
     if method.returns:
-        function['outputs'] = [str(t) for t in method.returns]
+        function['outputs'] = [t.compiled_type for t in method.returns]
     return function
+
+def event_abi(event: vyEvent) -> dict:
+    return dict()
 
 def get_abi(module: vyModule) -> list:
     abi = []
@@ -29,5 +33,7 @@ def get_abi(module: vyModule) -> list:
             function = {'type':'function'}
             function.update(function_abi(method))
             abi.append(function)
-    # TODO Add events
+    # Lastly, add events
+    for event in module.events:
+        abi.append(event_abi(event))
     return abi
