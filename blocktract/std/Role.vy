@@ -22,7 +22,8 @@
 #```
 
 # Instance variables
-@public # Creates getter for role variable (e.g. owner.appointee() in above example)
+@public # Creates getter for internal variable
+        # (e.g. `owner.appointee()` is in ABI of above example)
 appointee: address
 
 # Set during type init, uses calling context
