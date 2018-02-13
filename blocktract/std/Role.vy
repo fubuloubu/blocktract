@@ -26,6 +26,8 @@
         # (e.g. `owner.appointee()` is in ABI of above example)
 appointee: address
 
+# Logs
+# (Used to track updates to state from asynchronous transactions)
 Updated: __log__(new_appointee: address)
 
 # Set during type init, uses calling context
