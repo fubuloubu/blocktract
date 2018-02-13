@@ -34,6 +34,7 @@ def __init__(deed_address: address, auction_duration: timedelta, starting_bid: E
     self.timer.start()
 
 
+@public
 def bid():
     assert self.timer.active()
     assert msg.value > self.bid
@@ -48,7 +49,9 @@ def bid():
     self.highest_bidder = msg.sender
 
 
+@public
 def claim():
-    # NOTE: External call to `owner.__assign__(address)` at `deed` address
+    # External call to `owner.__assign__(address)` at `deed` address
+    # Note: implicitly checks `owner.assignee is msg.sender` that's why we have no checks
     self.deed.owner = self.highest_bidder
     selfdestruct(msg.sender)
