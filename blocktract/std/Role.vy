@@ -53,4 +53,4 @@ def __assign__(new_appointee: address):
     assert msg.sender == self.appointee
     self.appointee = new_appointee
     log.Updated(new_appointee)
-    # Generates `owner.Updated(address)` receipt for above example
+    # Generates `owner.Updated(address)` log for above example
