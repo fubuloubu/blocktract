@@ -28,7 +28,6 @@ appointee: address
 
 # Set during type init, uses calling context
 # Note: can have 0 or more inputs, no outputs
-@private # Must be private!
 def __init__():
     self.appointee = msg.sender
 
