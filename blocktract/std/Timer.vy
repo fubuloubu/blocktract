@@ -17,12 +17,12 @@ def __assign__(set_duration: timedelta):
 def start():
     self.start_time = blk.timestamp
     self.running = True
-    log.Started() # Generates `timer.Started` receipt
+    log.Started() # Generates `timer.Started` log
 
 @public
 def reset():
     self.running = False
-    log.Reset() # Generates `timer.Reset` receipt
+    log.Reset() # Generates `timer.Reset` log
 
 @public
 @constant
