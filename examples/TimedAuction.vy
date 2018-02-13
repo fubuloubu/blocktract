@@ -41,7 +41,8 @@ def bid():
 
     # Give the next highest their bid back
     # Note: No highest bidder exists the first time
-    if self.highest_bidder != 0x0:
+    if self.highest_bidder is not 0x0:
+        # ^ necessary because `address.transfer(Ether)` fails if address is 0x0
         self.highest_bidder.transfer(self.bid)
 
     # Set the bid value for the next time
