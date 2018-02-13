@@ -10,7 +10,7 @@
 #
 #def foo():
 #    self.owner = Role() # calls Role.__init__() using owner as storage
-#    # Note: must be initialized before it is used
+#    # Note: must be initialized before it is used elsewhere
 #
 #def bar():
 #    assert msg.sender is self.owner # calls owner.__repr__()
@@ -25,7 +25,7 @@
 @public # Creates getter for role variable (e.g. owner.appointee() in above example)
 appointee: address
 
-# Set during contract init, uses calling context
+# Set during type init, uses calling context
 # Note: can have 0 or more inputs, no outputs
 @private
 def __init__():
