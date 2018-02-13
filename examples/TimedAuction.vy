@@ -3,12 +3,10 @@ from std import Role, Timer # Multiple imports allowed
 # A Deed is any contract that has an `owner` that implements
 # the `Role` methods (e.g. `owner
 
-# New AST token 'contract' mapped to 'class'
-# unique to external contract definitions
+# New AST token 'contract' mapped to 'class' unique to external contract definitions
 deed: contract # External contract type
-    # New AST token 'has' mapped to 'def'
-    # unique to external contract definitions
-    has owner: Role # Implements methods in type
+    # New AST token 'has' mapped to 'def' unique to external contract definitions
+    has owner: Role # External contract should have all public methods in type
 highest_bidder: Role
 timer: Timer
 bid: Ether # Special labeled uint256 type
