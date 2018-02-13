@@ -37,6 +37,7 @@ def __init__():
 # e.g. `assert msg.sender is self.owner`
 # Note: cannot have inputs, only one output
 @private
+@constant # Must be constant!
 def __repr__() -> address:
     return self.appointee
 
