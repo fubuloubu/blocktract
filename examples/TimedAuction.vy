@@ -26,6 +26,8 @@ def __init__(deed_address: address, auction_duration: timedelta, starting_bid: E
     # NOTE: External call to `deed.owner.__repr__()`
     assert self.deed.owner == msg.sender
     
+    self.highest_bidder = Role() # bid() always fails if this is not set here.
+    
     self.bid = starting_bid
 
     # Init Timer type, calling 'timer.__init__(timedelta)'
