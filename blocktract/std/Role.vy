@@ -26,6 +26,8 @@
         # (e.g. `owner.appointee()` is in ABI of above example)
 appointee: address
 
+Updated: __log__(new_appointee: address)
+
 # Set during type init, uses calling context
 # Note: can have 0 or more inputs, no outputs
 def __init__():
@@ -48,3 +50,5 @@ def __repr__() -> address:
 def __assign__(new_appointee: address):
     assert msg.sender == self.appointee
     self.appointee = new_appointee
+    log.Updated(new_appointee)
+    # Generates `owner.Updated(address)` receipt for above example
