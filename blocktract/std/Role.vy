@@ -41,7 +41,7 @@ def __repr__() -> address:
 
 
 # Called when instance is assigned to
-# e.g. `self.owner = msg.sender
+# e.g. `self.owner = msg.sender`
 # Note: must have 1 and only 1 input, and no outputs
 @private
 def __assign__(new_appointee: address):
