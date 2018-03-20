@@ -1,6 +1,10 @@
+@public
 running: bool
 duration: timedelta
 start_time: timestamp
+
+Started: __log__()
+Reset: __log__()
 
 # NOTE: '__init__', '__repr__', and '__assign__' are optional,
 #       compiler will throw if used when unimplemented.
@@ -13,11 +17,14 @@ def __assign__(set_duration: timedelta):
 def start():
     self.start_time = blk.timestamp
     self.running = True
+    log.Started() # Generates `timer.Started` log
 
 @public
 def reset():
     self.running = False
+    log.Reset() # Generates `timer.Reset` log
 
 @public
+@constant
 def active() -> bool:
     return self.running and blk.timestamp <= self.start_time + self.duration
