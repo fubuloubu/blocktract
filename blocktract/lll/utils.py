@@ -1,5 +1,5 @@
 from ..ast import *
-
+from ..types import Type
 
 
 # Recursive function to map all Vyper AST Nodes to lisp of LLLNodes
@@ -10,18 +10,26 @@ def convert(node: vyAST) -> list:
         if 'payable' not in node.decorators:
             # Enforce 'msg.value = 0'
             safety.append(['assert', ['iszero', 'callvalue']])
-
-        body = [convert(stmt) for stmt in node.body]
-        return
-    if isinstance(node, vyReturn):
-        mem_ptr = 0#node.returns.memory_location
-        size = node.returns.type.size
-        reg_ptr = 0
-        return [['mstore', reg_ptr, ['sload', mem_ptr]], ['return', reg_ptr, size]]
+        return [convert(stmt) for stmt in node.body]
+    
+    # Statements
     if isinstance(node, vyAssert):
-        return
+        return ['assert', convert(node.stmt)]
+    if isinstance(node, vyBinOp):
+        return [str(node.operator), convert(node.left), convert(node.right)]
 
-
+    # Stuff that deals with registers
+    if isinstance(node, vyAssign):
+        [mem_ptr, _, _] = convert(node.var)
+        [_, reg_ptr, _] = convert(node.stmt)
+        return ['sstore', mem_ptr, ['mload', reg_ptr]]
+    if isinstance(node, vyReturn):
+        [mem_ptr, reg_ptr, size] = convert(node.returns)
+        return [['mstore', reg_ptr, ['sload', mem_ptr]], ['return', reg_ptr, size]]
+    # Ends recursion, figures out what the value of the mem_ptr and reg_ptr are
+    # at the moment of access, also what the size of the underlying type is
+    if isinstance(node, vyVariable):
+        return [0, 0, 0]
     raise NotImplementedError("LLL Conversion for '{}' not implemented!".format(node))
 
 
@@ -57,6 +65,6 @@ def ast_to_lll(contract: vyModule) -> (list, list):
 
 
 def link(schema, constructor, method_runtimes):
-    runtime = ['lll', ['seq', *overhead, *[create_call(s,r) for s,r in method_runtimes]], 0]
-    program = ['seq', *overhead, *constructor, ['return', 0, runtime]]
+    runtime = ['lll', ['seq', *schema, *[create_call(s,r) for s,r in method_runtimes]], 0]
+    program = ['seq', *schema, *constructor, ['return', 0, runtime]]
     return program

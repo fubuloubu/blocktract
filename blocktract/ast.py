@@ -61,18 +61,20 @@ class vyModule(vyAST):
 
 class vyVariable(vyAST):
     _fields = ('name','type')
-    def __init__(self, node: ast.AST):
+    def __init__(self, node):
         # Doesn't require parent or context, is leaf node of AST
         if isinstance(node, ast.arg):
             self.name = node.arg
+            self.type = get_type(node.annotation.id)
         elif isinstance(node, ast.AnnAssign):
             self.name = node.target.id
+            self.type = get_type(node.annotation.id)
+        # Creating an environment variable
+        elif isinstance(node, dict):
+            self.name = node['name']
+            self.type = node['type']
         else:
             raise NotImplementedError("Variable can't parse '{}'!".format(node))
-
-        # Determine type and initialize value
-        self.type = get_type(node.annotation.id) #TODO Load type using lookup from types.py
-
 
 class vyLiteral(vyAST):
     _fields = ('type','value')
